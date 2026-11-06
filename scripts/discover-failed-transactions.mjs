@@ -5,7 +5,7 @@ import {analyze} from '../src/diagnosis.mjs';
 const out={
  schema:'pharos-support-readonly-discovery-v1',observedAtUtc:new Date().toISOString(),
  network:'mainnet',chainId:1672,source:'Official Pharos hosted Chain MCP',
- action:'READ_ONLY_DISCOVERY_NOT_A_SIMULATION',scanLimits:{blocks:8,maxReceipts:64},
+ action:'READ_ONLY_DISCOVERY_NOT_A_SIMULATION',scanLimits:{blocks:40,maxReceipts:56},
  scannedBlocks:[],checkedReceipts:0,failedTransactions:[],
  disclaimer:'A status-0 receipt proves failure. Different causes are not assumed unless an error or a valid gas clue supports them.'
 };
@@ -15,9 +15,9 @@ try{
  const info=await mc.tool('get_chain_info');
  if(info?.chainId!==1672||info.chainIdMatches===false)throw Error('Wrong MCP chain');
  const head=BigInt(info.latestBlock);
- const offsets=[8n,16n,32n,64n,100n,150n,250n,500n];
+ const offsets=Array.from({length:40},(_,i)=>BigInt(4+i*8));
  for(const offset of offsets){
-  if(out.checkedReceipts>=64||out.failedTransactions.length>=5)break;
+  if(out.checkedReceipts>=56||out.failedTransactions.length>=5)break;
   const h=head-offset;
   if(h<1n)break;
   let block;
@@ -31,7 +31,7 @@ try{
     :x&&typeof x==='object'&&/^0x[0-9a-f]{64}$/i.test(x.hash||'')).slice(0,12);
   out.scannedBlocks.push({block:h.toString(),candidateTransactions:candidates.length});
   for(const tx of candidates){
-   if(out.checkedReceipts>=64||out.failedTransactions.length>=5)break;
+   if(out.checkedReceipts>=56||out.failedTransactions.length>=5)break;
    let receipt;
    const transactionHash=typeof tx==='string'?tx:tx.hash;
    try{receipt=await mc.tool('get_transaction_receipt',{hash:transactionHash})}catch{continue}
