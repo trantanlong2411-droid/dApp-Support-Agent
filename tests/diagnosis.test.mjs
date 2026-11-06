@@ -50,3 +50,14 @@ test('a mined receipt never becomes a pre-broadcast gas-balance rejection based 
  assert.equal(mined.diagnosis.type,'REVERT_UNKNOWN');
  assert.match(mined.diagnosis.evidence.join(' '),/cannot explain an already-mined receipt/);
 });
+
+test('actual Pharos Chain MCP low-gas read-only eth_call is recognized without claiming mined evidence',()=>{
+ const diagnostic=decodeFailure({mcpError:{message:'The execution has run out of gas.',code:-32015}});
+ assert.equal(diagnostic.type,'OUT_OF_GAS_POSSIBLE');
+ assert.equal(diagnostic.confidence,'medium');
+ assert.match(diagnostic.confidenceNote,/read-only test/);
+ const mined=analyze({hash,tx,receipt,replay:{mcpError:{message:'The execution has run out of gas.',code:-32015}}});
+ assert.equal(mined.status,'FAILED');
+ assert.equal(mined.diagnosis.type,'OUT_OF_GAS_POSSIBLE');
+ assert.match(mined.diagnosis.confidenceNote,/Historical eth_call replay/);
+});
