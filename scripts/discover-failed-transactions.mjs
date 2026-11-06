@@ -63,6 +63,7 @@ try{
 }finally{await mc.close()}
 await mkdir('proof',{recursive:true});
 await writeFile('proof/read-only-failure-discovery.json',JSON.stringify(out,null,2)+'\n');
+console.log('PHAROS_BLOCK_DISCOVERY_DIAGNOSTICS',JSON.stringify(out.scannedBlocks));
 console.log('PHAROS_FAILED_TX_DISCOVERY_SUMMARY',JSON.stringify({
  blocks:out.scannedBlocks.length,checkedReceipts:out.checkedReceipts,
  minedFailures:out.failedTransactions.length,diagnosisTypes:out.diagnosisTypes,
