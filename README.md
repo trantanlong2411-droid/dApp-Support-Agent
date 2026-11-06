@@ -50,6 +50,22 @@ These caveats are surfaced to every reviewer alongside the actual diagnosis.
 
 **Never enter a private key.** No wallet connection, transaction signing, approving or sending is present. The server's upstream endpoint is fixed to prevent user-controlled external requests. A simple 8-requests-per-minute/IP gate limits expensive public analysis calls; this is basic abuse resistance rather than a globally coordinated rate limiter.
 
+## Authentic failed-transaction evidence (verified 6 November 2026)
+
+The [official hosted Pharos Chain MCP read-only discovery run](https://github.com/trantanlong2411-droid/dApp-Support-Agent/actions/runs/42182142624) found **five actual Mainnet transactions with mined receipt status 0x0**:
+
+| Transaction | Block | Verified diagnostic result |
+| --- | ---: | --- |
+| [0xd39a03…c2f5e](https://pharosscan.xyz/tx/0xd39a037dbe20a72ce2ebc097494478a1ab573021b8f128a36aa83933fc2c2f5e) | 22257405 | Confirmed execution failure; specific reason not available |
+| [0x5b41bf…67826](https://pharosscan.xyz/tx/0x5b41bfba0b492605fff936af1c18ff20e28ba68c1ddf214073645b4421067826) | 22257341 | Confirmed execution failure; read-only simulation reported generic revert |
+| [0x8d49ea…1e290](https://pharosscan.xyz/tx/0x8d49ea3c234c980129b4ebf281b449e4fbad18758c7133e44b122ef294f1e290) | 22257237 | Confirmed execution failure; generic revert |
+| [0x70e4a0…46937](https://pharosscan.xyz/tx/0x70e4a044b3b8bb540a46d39ca9ab05d37d5ef6f99ce46620d86d0594a6846937) | 22257237 | Confirmed execution failure; generic revert |
+| [0x0b4d1c…0598b8](https://pharosscan.xyz/tx/0x0b4d1c8b7503120e418bf42016c25ef2dcb8b7eaa5b8fac8328edb86770598b8) | 22257237 | Confirmed execution failure; generic revert |
+
+The app exposes all five through **\`GET /api/verified-failures\`** and its public **Verified failed Mainnet transactions** section; reviewers click a button to recheck them directly using Chain MCP.
+
+**Evidence boundary:** Five status-zero transactions are five genuine failures, but **not five distinct root causes**. Historical replay exposed a generic revert on four and no reliable specific reason on one. The separate synthetic fixtures prove the engine can explain three different *failure patterns* (revert reason, allowance, probable gas shortage) without inventing on-chain evidence. [Verified receipt data](proof/verified-mainnet-failed-transactions.json).
+
 ## How to review
 
 1. Open the deployed Worker page and choose **Pharos Mainnet · Official Chain MCP**.
