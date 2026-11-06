@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dapp-support-agent",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-11-04",
+  "workers_dev": true,
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "MCP_SERVER": "https://mcp.pharos.xyz/mcp",
+    "ATLANTIC_RPC": "https://atlantic.dplabs-internal.com"
+  }
+}
