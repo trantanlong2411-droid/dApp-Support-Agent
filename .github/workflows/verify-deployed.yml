@@ -1,0 +1,31 @@
+name: dApp Support Agent — deployed Cloudflare Worker & Chain MCP
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-deployed.yml'
+      - 'scripts/smoke-deployed.mjs'
+      - 'src/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  deployed-worker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Confirm published Worker uses official Pharos Mainnet MCP and real Atlantic receipts
+        run: node scripts/smoke-deployed.mjs
+      - name: Archive production evidence
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pharos-dapp-support-deployed-readiness
+          path: proof/deployed-readiness.json
+          retention-days: 30
+          if-no-files-found: error
