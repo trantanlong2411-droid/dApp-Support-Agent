@@ -83,6 +83,13 @@ export function decodeFailure(replay){
   }catch{}
  }
  const lower=message.toLowerCase();
+ // Explicit out-of-gas wording returned by a read-only eth_call is an
+ // observation about THIS simulation, not proof of a mined transaction's cause.
+ if(/(?:out of gas|run out of gas|gas required exceeds allowance|intrinsic gas too low)/i.test(lower))
+  return make('OUT_OF_GAS_POSSIBLE','medium',[
+   'Read-only call reports: '+message,
+   'Gas was exhausted during this simulation; this is not an execution trace of an already-mined transaction.'
+  ],{confidenceNote:'Gas exhaustion was observed in the read-only test only. Do not assign a mined failure cause without matching historical trace evidence.'});
  // Server error messages can be less trustworthy than typed revert data. Mark as medium.
  if(/insufficient allowance|erc20insufficientallowance|transfer amount exceeds allowance/.test(lower))
   return make('INSUFFICIENT_ALLOWANCE','medium',['Simulation returned: '+message]);
