@@ -44,3 +44,8 @@ try{
 await mkdir('proof',{recursive:true});
 await writeFile('proof/live-usdc-readonly-failure-simulations.json',JSON.stringify(report,null,2)+'\n');
 console.log('PHAROS_LIVE_ERROR_LAB_SUMMARY',JSON.stringify(report.scenarios.map(x=>({name:x.scenario,class:x.classification}))));
+const expected=['INSUFFICIENT_ALLOWANCE','INSUFFICIENT_TOKEN_BALANCE','OUT_OF_GAS_POSSIBLE'];
+const actual=report.scenarios.map(s=>s.classification);
+if(JSON.stringify(actual)!==JSON.stringify(expected))
+ throw Error('Three actual on-chain read-only MCP simulations did not yield the required distinct diagnoses: '+JSON.stringify(actual));
+console.log('THREE_DISTINCT_MCP_READONLY_FAILURE_MODES_VERIFIED',JSON.stringify(actual));
