@@ -49,7 +49,7 @@ export async function createMcpSession(fetcher=fetch){
  await send('notifications/initialized',{},true);
  return {
   async tool(name,args={}){
-   if(!['get_chain_info','get_transaction','get_transaction_receipt','eth_call','get_balance'].includes(name))
+   if(!['get_chain_info','get_block','get_block_number','get_transaction','get_transaction_receipt','eth_call','get_balance'].includes(name))
     throw Error('Unsupported MCP tool');
    const response=await send('tools/call',{name,arguments:args});
    const entry=response?.content?.find(p=>p.type==='text'&&typeof p.text==='string');
