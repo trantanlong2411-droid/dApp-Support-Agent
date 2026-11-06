@@ -2,6 +2,7 @@ import {createMcpSession,validateHash} from './mcp.mjs';
 import {atlanticRpc} from './atlantic.mjs';
 import {analyze,simulatedCases} from './diagnosis.mjs';
 import {PAGE} from './page.mjs';
+import {VERIFIED_FAILURES,VERIFIED_SOURCE} from './examples.mjs';
 
 const VERSION='pharos-dapp-support-2026-11-06-v1';
 const headers={'cache-control':'no-store','x-content-type-options':'nosniff'};
@@ -89,6 +90,12 @@ export default{
     safe:true,readOnly:true,requiresWallet:false,
     supportCases:['contract revert reason','ERC20 allowance or token balance',
       'gas usage / possible out of gas','unknown failure / pending / not found']});
+  }
+  if(request.method==='GET'&&url.pathname==='/api/verified-failures'){
+   return json({ok:true,network:'mainnet',chainId:1672,
+    source:'Official hosted Pharos Chain MCP, verified mined receipts',
+    verification:VERIFIED_SOURCE,examples:VERIFIED_FAILURES,
+    warning:'Five distinct status-0 receipts are verified; the exact root causes are not all known. Do not infer allowance or out of gas from these records.'});
   }
   if(request.method==='GET'&&url.pathname==='/api/demos'){
    return json({ok:true,source:'SYNTHETIC_TEST_FIXTURES_NOT_REAL_TRANSACTIONS',
