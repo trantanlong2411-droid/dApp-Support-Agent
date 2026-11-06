@@ -43,3 +43,10 @@ test('3+ fixtures transparently marked simulations without fake hashes',()=>{
  assert.ok(cases.length>=3);assert.ok(new Set(cases.map(x=>x.diagnosis.type)).size>=3);
  for(const c of cases){assert.equal(c.simulated,true);assert.equal(c.transactionHash,null);assert.equal(c.explorer,null);assert.equal(c.source,'SIMULATED_FIXTURE_NOT_ON_CHAIN');}
 });
+
+test('a mined receipt never becomes a pre-broadcast gas-balance rejection based on misleading historical replay',()=>{
+ const mined=analyze({hash,tx,receipt,replay:{mcpError:{message:'insufficient funds for gas * price + value'}}});
+ assert.equal(mined.status,'FAILED');
+ assert.equal(mined.diagnosis.type,'REVERT_UNKNOWN');
+ assert.match(mined.diagnosis.evidence.join(' '),/cannot explain an already-mined receipt/);
+});
