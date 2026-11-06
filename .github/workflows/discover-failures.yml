@@ -1,0 +1,30 @@
+name: dApp Support Agent — discover authentic failed Mainnet tx samples
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/discover-failed-transactions.mjs'
+      - '.github/workflows/discover-failures.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  find-real-failed-transactions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Inspect bounded confirmed Pharos blocks and failed transaction receipts through official Chain MCP
+        run: node scripts/discover-failed-transactions.mjs
+      - name: Save actual receipts and diagnosis types regardless of how many failures were found
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dapp-support-authentic-failure-receipts
+          path: proof/read-only-failure-discovery.json
+          retention-days: 30
+          if-no-files-found: warn
