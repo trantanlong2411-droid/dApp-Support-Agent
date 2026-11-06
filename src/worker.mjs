@@ -32,10 +32,10 @@ async function inspectOnMainnet(hash,sessionFactory=createMcpSession){
   const chain=await s.tool('get_chain_info');
   if(chain.mcpError||chain.chainId!==1672||chain.chainIdMatches===false)
    throw Error('Pharos MCP chain verification failed (expected mainnet 1672)');
-  const [tx,receipt]=await Promise.all([
-   s.tool('get_transaction',{hash}),
-   s.tool('get_transaction_receipt',{hash})
-  ]);
+  // A remote MCP Streamable HTTP session is stateful; use sequential calls to
+  // avoid concurrent requests racing through the same server transport.
+  const tx=await s.tool('get_transaction',{hash});
+  const receipt=await s.tool('get_transaction_receipt',{hash});
   if(tx?.mcpError||receipt?.mcpError)
    throw Error('MCP could not retrieve the transaction or its receipt');
   let replay=null;
