@@ -15,6 +15,12 @@
 - Three deterministic **simulation-only** diagnostic paths: contract revert, insufficient allowance, and probable out-of-gas. An additional pre-broadcast gas-insufficiency case explains why it cannot have a mined hash.
 - Production smoke test verifies both live network paths and confirms the demos are labeled synthetic.
 
+## Five genuine Mainnet failures now available in the public dashboard
+
+[Actual official MCP block/receipt verification workflow](https://github.com/trantanlong2411-droid/dApp-Support-Agent/actions/runs/42182142624) checked real blocks and found five \`status:0x0\` receipts. The [curated JSON record](./verified-mainnet-failed-transactions.json) contains verified hash, block, gas used/limit and the diagnosis confidence. Public \`/api/verified-failures\` and the interactive dashboard let Pharos reviewers rerun each real hash without an admin password.
+
+The checks do **not** prove three distinct on-chain root causes. The generic revert and unknown-cause outcomes are presented accurately, while three different synthetic test fixtures demonstrate classifier capabilities. The user can supply other confirmed failed hashes to strengthen the last rubric item.
+
 ## Task rubric and missing evidence
 
 | Requirement | Status |
