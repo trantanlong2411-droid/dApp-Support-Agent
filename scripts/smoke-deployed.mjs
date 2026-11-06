@@ -33,6 +33,21 @@ assert.equal(demos.status,200);assert.equal(demos.data.ok,true);
 assert.ok(demos.data.cases.length>=3);
 assert.ok(new Set(demos.data.cases.map(x=>x.diagnosis.type)).size>=3);
 assert.ok(demos.data.cases.every(x=>x.simulated&&x.transactionHash===null&&x.explorer===null));
+const publicFailures=await get('/api/verified-failures');
+assert.equal(publicFailures.status,200);
+assert.equal(publicFailures.data.examples.length,5);
+assert.ok(publicFailures.data.examples.every(x=>x.status==='0x0'));
+const failedHash='0x5b41bfba0b492605fff936af1c18ff20e28ba68c1ddf214073645b4421067826';
+const realFailure=await analyze('mainnet',failedHash);
+assert.equal(realFailure.status,200,'Official hosted MCP failed-receipt analysis unavailable: '+JSON.stringify(realFailure.data).slice(0,220));
+assert.equal(realFailure.data.status,'FAILED');
+assert.equal(realFailure.data.transactionHash,failedHash);
+assert.match(realFailure.data.diagnosis.evidence.join(' '),/Mined receipt status: 0x0/);
+console.log('DAPP_SUPPORT_REAL_MINED_FAILURE_VERIFIED',JSON.stringify({
+ hash:failedHash,block:realFailure.data.blockNumber,
+ diagnosis:realFailure.data.diagnosis.type,
+ confidence:realFailure.data.diagnosis.confidence
+}));
 const bad=await analyze('mainnet','0xdeadbeef');
 assert.equal(bad.status,400);
 const atlanticHash='0x4a603ea2d43512a76cc21f2d64b09e1ec4e07c34adc929526b514289ccfa61e1';
@@ -50,8 +65,9 @@ assert.equal(mainnet.data.network,'mainnet');
 const proof={schema:'pharos-dapp-support-deployed-v1',checkedAtUtc:new Date().toISOString(),
  origin:base,version:expectedVersion,
  tests:{liveMainnetMcpTransaction:true,liveAtlanticRpcTransaction:true,
-  clearSyntheticFailures:true,hashInputValidation:true,readOnly:true},
+  clearSyntheticFailures:true,realFailedMainnetReceipt:true,publicRealFailures:5,hashInputValidation:true,readOnly:true},
  mainnet:{hash:mainnetHash,status:mainnet.data.status,source:mainnet.data.source},
+ mainnetFailed:{hash:failedHash,status:realFailure.data.status,diagnosis:realFailure.data.diagnosis.type,confidence:realFailure.data.diagnosis.confidence},
  atlantic:{hash:atlanticHash,status:atlantic.data.status,source:atlantic.data.source},
  threeActualDistinctFailedTransactions:'NOT_YET_DEMONSTRATED',
  note:'Production test proves actual Chain MCP retrieval and 3 transparent synthetic failure categories, but not 3 on-chain failed transaction examples.'};
