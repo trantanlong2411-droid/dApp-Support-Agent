@@ -1,0 +1,40 @@
+name: Pharos dApp Support Agent — tests, Worker bundle, live Chain MCP
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests-and-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Test all failure classifiers and genuine MCP session protocol
+        run: npm test
+      - name: Bundle deployable Cloudflare Worker
+        run: npm run build
+  actual-chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Verify official hosted Pharos Chain MCP on mainnet and Atlantic read-only RPC
+        run: node scripts/verify-chains.mjs
+      - name: Preserve independent mainnet MCP and Atlantic proof
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pharos-dapp-support-live-chain-proof
+          path: proof/live-chain-verification.json
+          retention-days: 30
+          if-no-files-found: error
