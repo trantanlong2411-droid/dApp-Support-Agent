@@ -1,0 +1,30 @@
+name: dApp Support Agent — real read-only Circle USDC failure lab via MCP
+on:
+  push:
+    branches: [main]
+    paths:
+      - scripts/live-usdc-error-lab.mjs
+      - .github/workflows/live-error-lab.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pharos-live-eth-calls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - name: Simulate genuine USDC token errors using official Pharos Chain MCP eth_call, no signing or gas
+        run: node scripts/live-usdc-error-lab.mjs
+      - name: Archive live on-chain read-only error results, including any inconclusive cases
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pharos-support-live-readonly-revert-cases
+          path: proof/live-usdc-readonly-failure-simulations.json
+          retention-days: 30
+          if-no-files-found: warn
