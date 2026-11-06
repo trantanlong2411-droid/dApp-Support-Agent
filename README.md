@@ -66,6 +66,20 @@ The app exposes all five through **\`GET /api/verified-failures\`** and its publ
 
 **Evidence boundary:** Five status-zero transactions are five genuine failures, but **not five distinct root causes**. Historical replay exposed a generic revert on four and no reliable specific reason on one. The separate synthetic fixtures prove the engine can explain three different *failure patterns* (revert reason, allowance, probable gas shortage) without inventing on-chain evidence. [Verified receipt data](proof/verified-mainnet-failed-transactions.json).
 
+## Three actual hosted Chain MCP read-only execution failures (verified 6 November 2026)
+
+[Live Chain MCP workflow — successful](https://github.com/trantanlong2411-droid/dApp-Support-Agent/actions/runs/42186491783) ran **three different eth_call requests on the real Circle USDC contract** on Pharos Mainnet (chain 1672). Unlike fabricated fixtures, hosted Pharos MCP actually returned:
+
+| Failure scenario | MCP returned | Diagnosis |
+| --- | --- | --- |
+| No ERC-20 allowance | ERC20: transfer amount exceeds allowance | INSUFFICIENT_ALLOWANCE (high confidence) |
+| Insufficient token balance | ERC20: transfer amount exceeds balance | INSUFFICIENT_TOKEN_BALANCE (high confidence) |
+| Gas too low | The execution has run out of gas. | OUT_OF_GAS_POSSIBLE (medium; only the simulated call) |
+
+**Proof distinction:** these three are **real read-only execution failures from Mainnet Chain MCP** but are **not three mined failed transactions**. The app also exposes five independently confirmed failed Mainnet receipt hashes, with currently unknown or generic revert root causes. Do not claim three separate mined causes without stronger on-chain evidence.
+
+The reviewer-facing website now displays these three real-MCP observations separately from the synthetic example cards. No key, wallet, gas or signing is involved.
+
 ## How to review
 
 1. Open the deployed Worker page and choose **Pharos Mainnet · Official Chain MCP**.
