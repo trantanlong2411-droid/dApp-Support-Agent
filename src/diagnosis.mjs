@@ -109,6 +109,13 @@ export function analyze({hash=null,tx=null,receipt=null,replay=null,network='mai
  if(status===1n)return {...meta,status:'SUCCESS',diagnosis:make('SUCCESS','high',['Mined receipt status: 0x1'])};
  if(status!==0n)throw Error('Unrecognized receipt status; cannot claim failure');
  const sim=decodeFailure(replay);
+ // A balance rejection before broadcast cannot itself have a mined status-0 receipt.
+ // Historical state replay can hit a different balance and must not override on-chain facts.
+ if(sim?.type==='INSUFFICIENT_NATIVE_FUNDS_PREBROADCAST')
+  return {...meta,status:'FAILED',diagnosis:make('REVERT_UNKNOWN','low',[
+   'Mined receipt status: 0x0',
+   'Historical read-only replay reported a pre-broadcast native balance error, which cannot explain an already-mined receipt'
+  ])};
  if(sim)return {...meta,status:'FAILED',diagnosis:{
    ...sim,evidence:['Mined receipt status: 0x0',...sim.evidence],
    confidenceNote:'Historical eth_call replay is a diagnostic hint, not a guaranteed reproduction of the exact mined state.'
