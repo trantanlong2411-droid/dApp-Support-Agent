@@ -1,0 +1,61 @@
+{
+  "schema": "pharos-dapp-support-mainnet-status-zero-evidence-v1",
+  "checkedAtUtc": "2026-11-06",
+  "source": "Official Pharos hosted Chain MCP",
+  "verification": "https://github.com/trantanlong2411-droid/dApp-Support-Agent/actions/runs/42182142624",
+  "confirmations": 5,
+  "provenDistinctRootCauses": 0,
+  "observedResultClasses": [
+    "REVERT_UNKNOWN",
+    "REVERT_REASON"
+  ],
+  "testsClaimThreeDistinctRootCausesOnChain": false,
+  "transactions": [
+    {
+      "hash": "0xd39a037dbe20a72ce2ebc097494478a1ab573021b8f128a36aa83933fc2c2f5e",
+      "block": "22257405",
+      "status": "0x0",
+      "diagnosis": "REVERT_UNKNOWN",
+      "evidenceLevel": "mined status 0 confirmed; cause not determined",
+      "gasUsed": "21584",
+      "gasLimit": "300000"
+    },
+    {
+      "hash": "0x5b41bfba0b492605fff936af1c18ff20e28ba68c1ddf214073645b4421067826",
+      "block": "22257341",
+      "status": "0x0",
+      "diagnosis": "REVERT_REASON",
+      "evidenceLevel": "generic execution revert from read-only replay; no detailed reason",
+      "gasUsed": "27170",
+      "gasLimit": "5000000"
+    },
+    {
+      "hash": "0x8d49ea3c234c980129b4ebf281b449e4fbad18758c7133e44b122ef294f1e290",
+      "block": "22257237",
+      "status": "0x0",
+      "diagnosis": "REVERT_REASON",
+      "evidenceLevel": "generic execution revert from read-only replay; no detailed reason",
+      "gasUsed": "27170",
+      "gasLimit": "5000000"
+    },
+    {
+      "hash": "0x70e4a044b3b8bb540a46d39ca9ab05d37d5ef6f99ce46620d86d0594a6846937",
+      "block": "22257237",
+      "status": "0x0",
+      "diagnosis": "REVERT_REASON",
+      "evidenceLevel": "generic execution revert from read-only replay; no detailed reason",
+      "gasUsed": "27170",
+      "gasLimit": "5000000"
+    },
+    {
+      "hash": "0x0b4d1c8b7503120e418bf42016c25ef2dcb8b7eaa5b8fac8328edb86770598b8",
+      "block": "22257237",
+      "status": "0x0",
+      "diagnosis": "REVERT_REASON",
+      "evidenceLevel": "generic execution revert from read-only replay; no detailed reason",
+      "gasUsed": "27170",
+      "gasLimit": "5000000"
+    }
+  ],
+  "limitation": "Status 0 proves on-chain execution failed. Read-only replay only showed generic execution reverted for four; it did not establish distinct underlying causes such as allowance, gas or slippage."
+}
